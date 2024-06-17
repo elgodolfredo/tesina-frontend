@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import {
   IconButton,
   Box,
@@ -15,22 +15,21 @@ import {
 } from '@chakra-ui/react';
 import {
   FiHome,
-  FiSettings,
   FiMenu,
+  FiPieChart,
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
+import { UserContext } from '../contexts/UserContext';
 
 interface LinkItemProps {
   name: string;
+  path: string;
   icon: IconType;
 }
-const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', icon: FiHome },
-  { name: 'Settings', icon: FiSettings },
-];
 
 export default function SimpleSidebar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box minH="92vh">
       <SidebarContent
@@ -60,6 +59,24 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  const linkItems: Array<LinkItemProps> = [
+    { name: 'Home', icon: FiHome, path: '/' },
+  ];
+  const [links, setLinks] = React.useState<LinkItemProps[]>(linkItems);
+  const { charts } = React.useContext(UserContext);
+
+  React.useEffect(() => {
+    const newLinks = linkItems.slice();
+    for (const chart of charts) {
+      newLinks.push({
+        name: chart.name,
+        icon: FiPieChart,
+        path: `/charts/${chart.id}`
+      });
+    }
+    setLinks(newLinks)
+  }, [charts])
+
   return (
     <Box
       bg={useColorModeValue('white', 'gray.900')}
@@ -70,8 +87,8 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+      {links.map((link) => (
+        <NavItem key={link.name} icon={link.icon} path={link.path}>
           {link.name}
         </NavItem>
       ))}
@@ -82,10 +99,11 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 interface NavItemProps extends FlexProps {
   icon: IconType;
   children: ReactNode;
+  path: string;
 }
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, path, children, ...rest }: NavItemProps) => {
   return (
-    <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+    <Link href={path} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
       <Flex
         align="center"
         p="4"

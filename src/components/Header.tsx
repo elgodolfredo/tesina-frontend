@@ -1,8 +1,11 @@
+import React from 'react'
 import { HamburgerIcon } from "@chakra-ui/icons"
 import { Box, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Stack } from "@chakra-ui/react"
+import { UserContext } from "../contexts/UserContext"
 
 
 export default function Header() {
+  const { user, logout } = React.useContext(UserContext);
   return <Box
     as="nav"
     w="100%"
@@ -14,7 +17,7 @@ export default function Header() {
         </Stack>
       </Box>
       <Box alignSelf="right" display="flex" flexDirection="row" alignItems="center">
-        <Box>Pablo Silva</Box>
+        <Box>¡Hola {user?.firstname}!</Box>
         <Box ml={2}>
           <Menu>
             <MenuButton
@@ -23,7 +26,7 @@ export default function Header() {
               icon={<HamburgerIcon />}
               variant="outline" />
             <MenuList>
-              <MenuItem>
+              <MenuItem onClick={logout}>
                 Cerrar sesión
               </MenuItem>
             </MenuList>

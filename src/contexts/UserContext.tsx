@@ -1,39 +1,73 @@
 import React from 'react';
-import { UserContextI, UserContextProps } from '../interfaces/';
+import { Chart, IUser, Sensor, UserContextI, UserContextProps } from '../interfaces/';
 import { app } from '../config/firebase';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { User } from 'firebase/auth';
 
 
 const initialUserContext: UserContextI = {
   user: null,
-  updateUser: (updatedUser: User | null) => { }
+  sensors: [],
+  charts: [],
+  logout: () => { }
 };
 
 export const UserContext = React.createContext<UserContextI>(initialUserContext);
 
 
 export const UserProvider = ({ children }: UserContextProps) => {
-  const [user, setUser] = React.useState<User | null>(initialUserContext.user);
+  const [firebaseUser, setFirebaseUser] = React.useState<User | null>(null);
+  const [user, setUser] = React.useState<IUser | null>(initialUserContext.user);
+  const [charts, setCharts] = React.useState<Chart[]>(initialUserContext.charts);
+  const [sensors, setSensors] = React.useState<Sensor[]>(initialUserContext.sensors);
 
-  React.useEffect(() => {
-    console.log('api get_logged_user')
-  }, []);
 
   React.useEffect(() => {
     const auth = getAuth(app);
     onAuthStateChanged(auth, (user) => {
-      console.log(user)
-      setUser(user)
+      setFirebaseUser(user)
     });
   }, []);
 
-  const updateUser = (updatedUser: User | null) => {
-    setUser(updatedUser);
+  React.useEffect(() => {
+    if (!firebaseUser) {
+      setUser(null);
+      //TODO: logout api
+      return;
+    }
+    firebaseUser.getIdToken().then((token) => {
+      fetch('/api/login', {
+        headers: {
+          'Content-Type': 'application/json'
+        }, method: 'POST', body: JSON.stringify({ accessToken: token })
+      }).then((response) => {
+        return response.json();
+      }).then((loggedUser) => {
+        setUser(loggedUser)
+        fetch('/api/user/info')
+      });
+
+    });
+  }, [firebaseUser]);
+
+
+  React.useEffect(() => {
+    if (!user) {
+      setSensors([]);
+      setCharts([]);
+      return;
+    }
+    fetch('/api/charts').then((response) => response.json()).then((charts) => setCharts(charts));
+    fetch('/api/sensors').then((response) => response.json()).then((sensors) => setSensors(sensors));
+
+  }, [user]);
+
+  const logout = () => {
+    signOut(getAuth(app))
   };
 
   return (
-    <UserContext.Provider value={{ user, updateUser }}>
+    <UserContext.Provider value={{ user, logout, sensors, charts }}>
       {children}
     </UserContext.Provider>
   );
