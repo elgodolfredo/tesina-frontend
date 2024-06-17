@@ -5,6 +5,7 @@ import RootLayout from '../layouts/RootLayout';
 import LoginLayout from '../layouts/LoginLayout';
 import LoginForm from "../pages/LoginForm";
 import RegisterForm from "../pages/RegisterForm";
+import ChartPage from "../pages/ChartPage";
 import { RouterProvider, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
@@ -18,6 +19,12 @@ export default function Router() {
     {
       path: "/",
       element: !user ? <Navigate to="/login" replace /> : <RootLayout></RootLayout>,
+      children: [
+        {
+          path: '/charts/:id',
+          element: <ChartPage></ChartPage>
+        }
+      ]
     },
     {
       path: '/login',

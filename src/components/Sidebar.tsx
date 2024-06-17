@@ -6,7 +6,6 @@ import {
   Flex,
   Icon,
   useColorModeValue,
-  Link,
   Drawer,
   DrawerContent,
   useDisclosure,
@@ -20,6 +19,7 @@ import {
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { UserContext } from '../contexts/UserContext';
+import { Link } from 'react-router-dom';
 
 interface LinkItemProps {
   name: string;
@@ -103,8 +103,8 @@ interface NavItemProps extends FlexProps {
 }
 const NavItem = ({ icon, path, children, ...rest }: NavItemProps) => {
   return (
-    <Link href={path} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
-      <Flex
+    <Link to={path}>
+      <Box _focus={{ boxShadow: 'none' }} style={{ textDecoration: 'none' }}><Flex
         align="center"
         p="4"
         mx="4"
@@ -128,6 +128,7 @@ const NavItem = ({ icon, path, children, ...rest }: NavItemProps) => {
         )}
         {children}
       </Flex>
+      </Box>
     </Link>
   );
 };

@@ -10,8 +10,8 @@ export interface IUser {
 
 export interface Chart {
   id: number;
-  sensor_id: number;
-  user_id: number;
+  sensorId: number;
+  userId: number;
   name: string;
   index: string;
   type: string;
@@ -29,6 +29,8 @@ export interface UserContextI {
   charts: Chart[];
   sensors: Sensor[];
   logout: () => void;
+  getChart: (id: number) => Chart | null;
+  getChartData: (chart: Chart, date: string) => any;
 }
 
 export interface UserContextProps {

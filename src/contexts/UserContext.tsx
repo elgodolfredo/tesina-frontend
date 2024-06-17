@@ -9,7 +9,9 @@ const initialUserContext: UserContextI = {
   user: null,
   sensors: [],
   charts: [],
-  logout: () => { }
+  logout: () => { },
+  getChart: () => { return null },
+  getChartData: () => { return []; }
 };
 
 export const UserContext = React.createContext<UserContextI>(initialUserContext);
@@ -66,8 +68,18 @@ export const UserProvider = ({ children }: UserContextProps) => {
     signOut(getAuth(app))
   };
 
+  const getChart = (id: number) => {
+    const chart = charts.find((chart) => chart.id == id);
+    return chart || null;
+  };
+
+  const getChartData = async (chart: Chart, date: string) => {
+    const groupBy = 'minutes';
+    return fetch(`/api/sensors/${chart.sensorId}/date/${date}/${chart.search_function_name}/${groupBy}/index/${chart.index}`).then((r) => r.json());
+  }
+
   return (
-    <UserContext.Provider value={{ user, logout, sensors, charts }}>
+    <UserContext.Provider value={{ user, logout, sensors, charts, getChart, getChartData }}>
       {children}
     </UserContext.Provider>
   );
