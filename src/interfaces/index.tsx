@@ -28,6 +28,7 @@ export interface UserContextI {
   user: IUser | null;
   charts: Chart[];
   sensors: Sensor[];
+  loaded: boolean;
   logout: () => void;
   getChart: (id: number) => Chart | null;
   getChartData: (chart: Chart, date: string) => any;

@@ -9,6 +9,7 @@ const initialUserContext: UserContextI = {
   user: null,
   sensors: [],
   charts: [],
+  loaded: false,
   logout: () => { },
   getChart: () => { return null },
   getChartData: () => { return []; },
@@ -24,19 +25,22 @@ export const UserProvider = ({ children }: UserContextProps) => {
   const [user, setUser] = React.useState<IUser | null>(initialUserContext.user);
   const [charts, setCharts] = React.useState<Chart[]>(initialUserContext.charts);
   const [sensors, setSensors] = React.useState<Sensor[]>(initialUserContext.sensors);
+  const [loaded, setLoaded] = React.useState<boolean>(false)
 
 
   React.useEffect(() => {
     const auth = getAuth(app);
     onAuthStateChanged(auth, (user) => {
       setFirebaseUser(user)
+      if (!user) {
+        setLoaded(true);
+      }
     });
   }, []);
 
   React.useEffect(() => {
     if (!firebaseUser) {
       setUser(null);
-      //TODO: logout api
       return;
     }
     firebaseUser.getIdToken().then((token) => {
@@ -47,8 +51,8 @@ export const UserProvider = ({ children }: UserContextProps) => {
       }).then((response) => {
         return response.json();
       }).then((loggedUser) => {
-        setUser(loggedUser)
-        fetch('/api/user/info')
+        setUser(loggedUser);
+        setLoaded(true);
       });
 
     });
@@ -109,7 +113,7 @@ export const UserProvider = ({ children }: UserContextProps) => {
 
 
   return (
-    <UserContext.Provider value={{ user, logout, sensors, charts, getChart, getChartData, createChart, createSensor }}>
+    <UserContext.Provider value={{ user, logout, sensors, charts, getChart, getChartData, createChart, createSensor, loaded }}>
       {children}
     </UserContext.Provider>
   );

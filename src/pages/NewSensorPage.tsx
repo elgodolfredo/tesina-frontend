@@ -31,7 +31,7 @@ export default function NewSensorPage() {
     }
   }
 
-  return <Grid templateColumns='repeat(2, 1fr)'>
+  return <Grid templateColumns='repeat(2, 1fr)' gap={5}>
     <GridItem>
       <Card>
         <CardHeader>
