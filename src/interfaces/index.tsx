@@ -15,7 +15,7 @@ export interface Chart {
   name: string;
   index: string;
   type: string;
-  search_function_name: number;
+  search_function_name: string;
 }
 
 export interface Sensor {
@@ -31,6 +31,8 @@ export interface UserContextI {
   logout: () => void;
   getChart: (id: number) => Chart | null;
   getChartData: (chart: Chart, date: string) => any;
+  createChart: (newChart: Chart) => Promise<Chart>;
+  createSensor: (newSensor: Sensor) => Promise<Sensor>;
 }
 
 export interface UserContextProps {

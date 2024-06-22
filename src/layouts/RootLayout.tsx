@@ -12,7 +12,7 @@ export default function RootLayout() {
       <GridItem colSpan={2}>
         <Sidebar></Sidebar>
       </GridItem>
-      <GridItem colSpan={8} bg='green.300'>
+      <GridItem colSpan={8} bg='gray.100' p={10}>
         <Outlet />
       </GridItem>
     </Grid>

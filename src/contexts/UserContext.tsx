@@ -11,7 +11,9 @@ const initialUserContext: UserContextI = {
   charts: [],
   logout: () => { },
   getChart: () => { return null },
-  getChartData: () => { return []; }
+  getChartData: () => { return []; },
+  createChart: async (newChart: Chart) => { return newChart },
+  createSensor: async (newSensor: Sensor) => { return newSensor },
 };
 
 export const UserContext = React.createContext<UserContextI>(initialUserContext);
@@ -76,10 +78,38 @@ export const UserProvider = ({ children }: UserContextProps) => {
   const getChartData = async (chart: Chart, date: string) => {
     const groupBy = 'minutes';
     return fetch(`/api/sensors/${chart.sensorId}/date/${date}/${chart.search_function_name}/${groupBy}/index/${chart.index}`).then((r) => r.json());
+  };
+
+  const create = async (input: string, newObj: any) => {
+    return fetch(input, {
+      headers: {
+        'Content-Type': 'application/json',
+      }, method: 'POST', body: JSON.stringify(newObj)
+    }).then(async (r) => {
+      if (r.status !== 200) {
+        throw Error((await r.json()).message)
+      }
+      return r.json()
+    })
+  };
+
+  const createChart = async (newChart: Chart) => {
+    return create('/api/charts', newChart).then((chart: Chart) => {
+      setCharts([...charts, chart]);
+      return chart;
+    })
   }
+    ;
+  const createSensor = async (newChart: Sensor) => {
+    return create('/api/sensors', newChart).then((sensor: Sensor) => {
+      setSensors([...sensors, sensor]);
+      return sensor;
+    })
+  };
+
 
   return (
-    <UserContext.Provider value={{ user, logout, sensors, charts, getChart, getChartData }}>
+    <UserContext.Provider value={{ user, logout, sensors, charts, getChart, getChartData, createChart, createSensor }}>
       {children}
     </UserContext.Provider>
   );

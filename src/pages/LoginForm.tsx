@@ -2,9 +2,6 @@ import { Flex, Text, Heading, Stack, useColorModeValue, Box, Button } from "@cha
 import { app } from "../config/firebase";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 
-
-
-
 export default function LoginForm() {
 
   const loginWithGoogle = async () => {

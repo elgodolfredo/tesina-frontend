@@ -61,6 +61,8 @@ interface SidebarProps extends BoxProps {
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const linkItems: Array<LinkItemProps> = [
     { name: 'Home', icon: FiHome, path: '/' },
+    { name: 'Crear sensor', icon: FiHome, path: '/sensors/new' },
+    { name: 'Crear gráfico', icon: FiHome, path: '/charts/new' },
   ];
   const [links, setLinks] = React.useState<LinkItemProps[]>(linkItems);
   const { charts } = React.useContext(UserContext);
